@@ -20,4 +20,4 @@ We are using spot instances to reduce the bill.
 Create one key-pair and import public key into AWS.
 eksctl create cluster --config-file=eks.yaml
 
-![alt text](image.png)
+![alt text](./images/image.png)
