@@ -35,6 +35,7 @@ VALIDATE $? "Docker Repo added"
 
 yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y &>> "$LOGFILE"
 VALIDATE $? "Docker components are installed"
+yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y &>> "$LOGFILE" || { echo -e "$R Docker components installation failed. Check $LOGFILE for more details. $N"; exit 1; }
 
 systemctl start docker &>> "$LOGFILE"
 VALIDATE $? "Docker Started"
