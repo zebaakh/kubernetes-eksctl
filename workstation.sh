@@ -11,7 +11,7 @@ SCRIPT_NAME=$(basename "$0")
 DATE=$(date +%F)
 LOGFILE=$LOGSDIR/$SCRIPT_NAME-$DATE.log
 
-echo -e "$Y This script runs on CentOS 8 $N"
+echo -e "$Y This script runs on Amazon Linux 2023 $N"
 
 if [ "$USERID" -ne 0 ]; then
     echo -e "$R ERROR:: Please run this script with root access $N"
@@ -30,12 +30,8 @@ VALIDATE() {
 yum install -y yum-utils &>> "$LOGFILE"
 VALIDATE $? "yum-utils package installed"
 
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo &>> "$LOGFILE"
-VALIDATE $? "Docker Repo added"
-
-yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y &>> "$LOGFILE"
-VALIDATE $? "Docker components are installed"
-yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y &>> "$LOGFILE" || { echo -e "$R Docker components installation failed. Check $LOGFILE for more details. $N"; exit 1; }
+amazon-linux-extras install docker &>> "$LOGFILE"
+VALIDATE $? "Docker package installed"
 
 systemctl start docker &>> "$LOGFILE"
 VALIDATE $? "Docker Started"
@@ -43,8 +39,8 @@ VALIDATE $? "Docker Started"
 systemctl enable docker &>> "$LOGFILE"
 VALIDATE $? "Docker Enabled"
 
-usermod -aG docker centos &>> "$LOGFILE"
-VALIDATE $? "centos user added to docker group"
+usermod -aG docker ec2-user &>> "$LOGFILE"
+VALIDATE $? "ec2-user added to docker group"
 
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp &>> "$LOGFILE"
 VALIDATE $? "Downloaded eksctl command"
@@ -54,7 +50,7 @@ mv /tmp/eksctl /usr/local/bin &>> "$LOGFILE"
 VALIDATE $? "Moved eksctl to bin folder"
 
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" &>> "$LOGFILE"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl &>> "$LOGFILE"
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl &>> "$LOGFILE"
 VALIDATE $? "kubectl installed"
 
 git clone https://github.com/ahmetb/kubectx /opt/kubectx &>> "$LOGFILE"
