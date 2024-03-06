@@ -30,7 +30,7 @@ VALIDATE() {
 yum install -y yum-utils &>> "$LOGFILE"
 VALIDATE $? "yum-utils package installed"
 
-amazon-linux-extras install docker &>> "$LOGFILE"
+yum install -y docker &>> "$LOGFILE"
 VALIDATE $? "Docker package installed"
 
 systemctl start docker &>> "$LOGFILE"
